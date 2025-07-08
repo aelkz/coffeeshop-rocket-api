@@ -1,0 +1,36 @@
+# === Rust build artifacts ===
+/target
+**/*.rs.bk
+
+# === IDEs and editors ===
+.idea
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === OS and file system ===
+.DS_Store
+Thumbs.db
+
+# === Environment and secrets ===
+.env
+.env.*
+
+# === Diesel and SQLite ===
+/db/*.sqlite
+diesel.toml
+
+# === Rocket ===
+Rocket.toml
+
+# === Logs or temp ===
+*.log
+
+# === Node / JS (if used anywhere) ===
+node_modules/
+
+# === Custom build/test dirs ===
+/coverage/
+/dist/
+/build/
