@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use crate::schema::extras;
 use serde::{Serialize, Deserialize};
 

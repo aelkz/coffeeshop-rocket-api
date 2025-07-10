@@ -28,3 +28,24 @@ Why use TEXT instead of INTEGER?
 •	SQLite doesn’t have a dedicated DATETIME type — it’s just TEXT, REAL, or INTEGER.<br>
 •	Diesel + chrono::NaiveDateTime expects TEXT formatted in a valid datetime string format (like "2024-07-06 15:30:00").<br>
 •	NaiveDateTime has no timezone — matches SQLite’s behavior well.
+
+### Data Types
+
+### 🧩 Rust to SQLite Type Mapping
+
+| Rust Type             | SQLite Type | Notes                                  |
+|-----------------------|-------------|----------------------------------------|
+| `String` (UUID)       | `TEXT`      | Used for IDs (UUID stored as text)     |
+| `Decimal`             | `TEXT`      | Requires `rust_decimal`; store as text |
+| `NaiveDateTime`       | `TEXT`      | ISO 8601 format datetime                |
+| `NaiveDate`           | `TEXT`      | ISO 8601 format date only              |
+| `bool`                | `BOOLEAN`   | Stored as `0` (false) or `1` (true)    |
+| Enum (e.g. `OrderStatus`) | `TEXT`  | Stored as enum variant string          |
+
+### Running the app
+
+```
+cargo clean
+cargo build
+cargo run
+```

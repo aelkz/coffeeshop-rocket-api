@@ -1,4 +1,4 @@
-use crate::schema::customers;
+use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Serialize, Deserialize};
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
