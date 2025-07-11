@@ -1,6 +1,4 @@
-use rocket_sync_db_pools::database;
-use diesel::SqliteConnection;
+use rocket_sync_db_pools::{database, diesel};
 
-// responsible for defining the DB connection and Rocket pool wrapper.
 #[database("sqlite")]
-pub struct DbConn(SqliteConnection);
+pub struct DbConn(pub diesel::SqliteConnection);

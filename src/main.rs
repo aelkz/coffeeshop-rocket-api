@@ -1,9 +1,9 @@
-mod db;
-mod schema;  // ← this makes `crate::schema` available
-mod models;
-
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate rocket;
+
+mod db;
+mod models;
+mod schema;
 
 use dotenvy::dotenv;
 use diesel::result::Error::NotFound;

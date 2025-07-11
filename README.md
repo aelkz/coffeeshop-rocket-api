@@ -42,7 +42,31 @@ Why use TEXT instead of INTEGER?
 | `bool`                | `BOOLEAN`   | Stored as `0` (false) or `1` (true)    |
 | Enum (e.g. `OrderStatus`) | `TEXT`  | Stored as enum variant string          |
 
+### Final model structure
+
+```
+models/
+├── infra/
+│   ├── mod.rs
+│   └── sqlite_types.rs (handles all custom types)
+├── drink_size.rs
+├── order_status.rs
+├── order.rs
+├── order_item.rs
+├── order_item_extra.rs
+├── drink.rs
+├── customer.rs
+├── employee.rs
+├── extra.rs
+└── mod.rs
+```
+
 ### Running the app
+
+Try automatically fixing some warnings:
+```
+cargo fix --bin "coffeeshop-rocket-api" --allow-dirty
+```
 
 ```
 cargo clean
