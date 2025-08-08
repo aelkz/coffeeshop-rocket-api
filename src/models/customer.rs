@@ -35,6 +35,14 @@ pub struct NewCustomer {
     pub email: String,
 }
 
+// Input model (for updating customers)
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateCustomer {
+    pub name: String,
+    pub email: String,
+}
+
 impl Customer {
     /// Convert to API-friendly model
     pub fn to_api_model(&self) -> CustomerApiModel {
@@ -59,6 +67,14 @@ impl Customer {
             updated_at: SqliteDateTime::from(now),
             deleted_at: None,
         }
+    }
+    
+    /// Update an existing customer with new data
+    /// Only updates name, email, and updated_at. created_at remains unchanged.
+    pub fn update_from_input(&mut self, update_data: UpdateCustomer) {
+        self.name = update_data.name;
+        self.email = update_data.email;
+        self.updated_at = SqliteDateTime::from(chrono::Utc::now().naive_utc());
     }
 }
 

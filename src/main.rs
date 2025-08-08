@@ -7,12 +7,10 @@ mod routes;
 mod schema;
 
 use dotenvy::dotenv;
-use diesel::result::Error::NotFound;
-use rocket::{Rocket, Build};
+use rocket::{Rocket, Build, Request, catch, catchers};
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::serde::json::{Value, json, Json};
-use rocket::response::status::{self, Custom};
 use rocket_sync_db_pools::database;
 
 #[database("sqlite")]
@@ -25,6 +23,42 @@ struct DbConn(diesel::SqliteConnection);
 #[get("/")]
 fn hello() -> &'static str {
     "Coffee Shop API is running!"
+}
+
+/// JSON error catcher for 400 Bad Request
+#[catch(400)]
+fn bad_request(_req: &Request) -> Json<Value> {
+    Json(json!({
+        "error": "Bad Request",
+        "message": "The request was invalid or cannot be served."
+    }))
+}
+
+/// JSON error catcher for 404 Not Found
+#[catch(404)]
+fn not_found(_req: &Request) -> Json<Value> {
+    Json(json!({
+        "error": "Not Found",
+        "message": "The requested resource could not be found."
+    }))
+}
+
+/// JSON error catcher for 422 Unprocessable Entity
+#[catch(422)]
+fn unprocessable_entity(_req: &Request) -> Json<Value> {
+    Json(json!({
+        "error": "Unprocessable Entity",
+        "message": "The request was well-formed but contains invalid data or unknown fields."
+    }))
+}
+
+/// JSON error catcher for 500 Internal Server Error
+#[catch(500)]
+fn internal_error(_req: &Request) -> Json<Value> {
+    Json(json!({
+        "error": "Internal Server Error", 
+        "message": "An unexpected error occurred while processing the request."
+    }))
 }
 
 async fn run_db_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
@@ -57,6 +91,9 @@ async fn main() {
         
         // Run database migrations on startup
         .attach(AdHoc::on_ignite("Database Initialization", run_db_migrations))
+        
+        // Register JSON error catchers
+        .register("/", catchers![bad_request, not_found, unprocessable_entity, internal_error])
         
         .launch()
         .await;

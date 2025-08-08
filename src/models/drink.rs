@@ -38,6 +38,14 @@ pub struct NewDrink {
     pub base_price: Decimal,
 }
 
+// input model (for updating drinks)
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateDrink {
+    #[serde(with = "rust_decimal::serde::str")]
+    pub base_price: Decimal,
+}
+
 impl Drink {
     /// convert to API-friendly model
     pub fn to_api_model(&self) -> DrinkApiModel {
@@ -62,6 +70,13 @@ impl Drink {
             updated_at: SqliteDateTime::from(now),
             deleted_at: None,
         }
+    }
+    
+    /// Update an existing drink with new data
+    /// Only updates base_price and updated_at. Name is immutable, created_at remains unchanged.
+    pub fn update_from_input(&mut self, update_data: UpdateDrink) {
+        self.base_price = SqliteDecimal::from(update_data.base_price);
+        self.updated_at = SqliteDateTime::from(chrono::Utc::now().naive_utc());
     }
 }
 
