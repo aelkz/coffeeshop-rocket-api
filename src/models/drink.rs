@@ -6,8 +6,9 @@ use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 
 // database model (used for querying and inserting)
-#[derive(Queryable, Insertable, Debug)]
+#[derive(Queryable, Insertable, Selectable, Debug)]
 #[diesel(table_name = drinks)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Drink {
     pub id: String,
     pub name: String,

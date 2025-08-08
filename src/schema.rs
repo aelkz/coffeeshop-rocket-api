@@ -2,7 +2,7 @@
 
 diesel::table! {
     customers (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         name -> Text,
         email -> Text,
         created_at -> Text,
@@ -13,7 +13,7 @@ diesel::table! {
 
 diesel::table! {
     drinks (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         name -> Text,
         base_price -> Text,
         created_at -> Text,
@@ -24,7 +24,7 @@ diesel::table! {
 
 diesel::table! {
     employees (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         name -> Text,
         email -> Text,
         birth_date -> Text,
@@ -36,7 +36,7 @@ diesel::table! {
 
 diesel::table! {
     extras (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         name -> Text,
         extra_price -> Text,
         is_available -> Bool,
@@ -45,7 +45,7 @@ diesel::table! {
 
 diesel::table! {
     order_item_extras (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         order_item_id -> Text,
         extra_id -> Text,
     }
@@ -53,7 +53,7 @@ diesel::table! {
 
 diesel::table! {
     order_items (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         order_id -> Text,
         drink_id -> Text,
         size -> Text,
@@ -63,7 +63,7 @@ diesel::table! {
 
 diesel::table! {
     orders (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         customer_id -> Text,
         employee_id -> Text,
         status -> Text,

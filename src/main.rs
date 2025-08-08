@@ -3,6 +3,7 @@
 
 mod db;
 mod models;
+mod routes;
 mod schema;
 
 use dotenvy::dotenv;
@@ -17,9 +18,13 @@ use rocket_sync_db_pools::database;
 #[database("sqlite")]
 struct DbConn(diesel::SqliteConnection);
 
+/// Health check endpoint
+/// 
+/// Returns a simple greeting to verify the API is running.
+/// This endpoint doesn't require database access.
 #[get("/")]
 fn hello() -> &'static str {
-    "Hello from Rocket!"
+    "Coffee Shop API is running!"
 }
 
 async fn run_db_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
@@ -40,9 +45,19 @@ async fn main() {
     dotenv().ok(); // loads .env into process environment
 
     let _ = rocket::build()
+        // Health check endpoint
         .mount("/", routes![hello])
+        
+        // API endpoints - all mounted under /api prefix
+        .mount("/api", routes::customers::routes())  // /api/customers/*
+        .mount("/api", routes::drinks::routes())     // /api/drinks/*
+        
+        // Database connection pool
         .attach(DbConn::fairing())
+        
+        // Run database migrations on startup
         .attach(AdHoc::on_ignite("Database Initialization", run_db_migrations))
+        
         .launch()
         .await;
 }
