@@ -81,11 +81,12 @@ async fn main() {
     let _ = rocket::build()
         // Health check endpoint
         .mount("/", routes![hello])
-        
+
         // API endpoints - all mounted under /api prefix
         .mount("/api", routes::customers::routes())  // /api/customers/*
         .mount("/api", routes::drinks::routes())     // /api/drinks/*
-        
+        .mount("/api", routes::employees::routes())  // /api/employees/*
+
         // Database connection pool
         .attach(DbConn::fairing())
         
