@@ -1,3 +1,5 @@
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/aelkz/coffeeshop-rocket-api?utm_source=oss&utm_medium=github&utm_campaign=aelkz%2Fcoffeeshop-rocket-api&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 # ☕ Coffee Shop API - Rocket Edition
 
 A modern REST API for coffee shop management built with **Rust**, **Rocket**, and **Diesel ORM**. This project demonstrates clean architecture, type safety, and robust database integration using SQLite.
