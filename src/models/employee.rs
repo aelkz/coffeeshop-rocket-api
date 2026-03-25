@@ -5,8 +5,9 @@ use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 
 // Database model (used for querying and inserting)
-#[derive(Queryable, Insertable, Debug)]
+#[derive(Queryable, Insertable, Selectable, Debug)]
 #[diesel(table_name = employees)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Employee {
     pub id: String,
     pub name: String,
@@ -23,9 +24,15 @@ pub struct EmployeeApiModel {
     pub id: String,
     pub name: String,
     pub email: String,
+    /// Birth date in ISO 8601 format (YYYY-MM-DD)
+    #[serde(with = "crate::models::infra::sqlite_types::date_format")]
     pub birth_date: NaiveDate,
+    #[serde(with = "crate::models::infra::sqlite_types::datetime_format")]
     pub created_at: NaiveDateTime,
+    #[serde(with = "crate::models::infra::sqlite_types::datetime_format")]
     pub updated_at: NaiveDateTime,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, with = "crate::models::infra::sqlite_types::datetime_format_option")]
     pub deleted_at: Option<NaiveDateTime>,
 }
 
@@ -34,7 +41,18 @@ pub struct EmployeeApiModel {
 pub struct NewEmployee {
     pub name: String,
     pub email: String,
+    /// Birth date in ISO 8601 format (YYYY-MM-DD)
+    /// Must be a valid past date and employee must be of legal working age
+    #[serde(with = "crate::models::infra::sqlite_types::date_format")]
     pub birth_date: NaiveDate,
+}
+
+// Input model (for updating employees)
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UpdateEmployee {
+    pub name: String,
+    pub email: String,
 }
 
 impl Employee {
@@ -63,6 +81,14 @@ impl Employee {
             updated_at: SqliteDateTime::from(now),
             deleted_at: None,
         }
+    }
+
+    /// Update an existing employee with new data
+    /// Only updates name, email, and updated_at. Birth date is immutable, created_at remains unchanged.
+    pub fn update_from_input(&mut self, update_data: UpdateEmployee) {
+        self.name = update_data.name;
+        self.email = update_data.email;
+        self.updated_at = SqliteDateTime::from(chrono::Utc::now().naive_utc());
     }
 }
 

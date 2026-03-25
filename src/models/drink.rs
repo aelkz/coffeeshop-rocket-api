@@ -25,8 +25,12 @@ pub struct DrinkApiModel {
     pub name: String,
     #[serde(with = "rust_decimal::serde::str")]
     pub base_price: Decimal,
+    #[serde(with = "crate::models::infra::sqlite_types::datetime_format")]
     pub created_at: NaiveDateTime,
+    #[serde(with = "crate::models::infra::sqlite_types::datetime_format")]
     pub updated_at: NaiveDateTime,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, with = "crate::models::infra::sqlite_types::datetime_format_option")]
     pub deleted_at: Option<NaiveDateTime>,
 }
 

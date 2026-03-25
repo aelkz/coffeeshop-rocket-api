@@ -175,3 +175,83 @@ impl SqliteOrderStatus {
         self.0
     }
 }
+
+// Serde format modules for consistent API date/datetime serialization
+pub mod date_format {
+    use chrono::NaiveDate;
+    use serde::{self, Deserialize, Deserializer, Serializer};
+
+    const FORMAT: &str = "%Y-%m-%d";
+
+    pub fn serialize<S>(date: &NaiveDate, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = format!("{}", date.format(FORMAT));
+        serializer.serialize_str(&s)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<NaiveDate, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        NaiveDate::parse_from_str(&s, FORMAT).map_err(serde::de::Error::custom)
+    }
+}
+
+pub mod datetime_format {
+    use chrono::NaiveDateTime;
+    use serde::{self, Deserialize, Deserializer, Serializer};
+
+    const FORMAT: &str = "%Y-%m-%dT%H:%M:%S";
+
+    pub fn serialize<S>(datetime: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = format!("{}", datetime.format(FORMAT));
+        serializer.serialize_str(&s)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        NaiveDateTime::parse_from_str(&s, FORMAT).map_err(serde::de::Error::custom)
+    }
+}
+
+pub mod datetime_format_option {
+    use chrono::NaiveDateTime;
+    use serde::{self, Deserialize, Deserializer, Serializer};
+
+    const FORMAT: &str = "%Y-%m-%dT%H:%M:%S";
+
+    pub fn serialize<S>(datetime: &Option<NaiveDateTime>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match datetime {
+            Some(dt) => {
+                let s = format!("{}", dt.format(FORMAT));
+                serializer.serialize_some(&s)
+            }
+            None => serializer.serialize_none(),
+        }
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<NaiveDateTime>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let opt = Option::<String>::deserialize(deserializer)?;
+        match opt {
+            Some(s) => NaiveDateTime::parse_from_str(&s, FORMAT)
+                .map(Some)
+                .map_err(serde::de::Error::custom),
+            None => Ok(None),
+        }
+    }
+}
